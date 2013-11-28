@@ -1,0 +1,202 @@
+var songlist="";
+
+var isOpera = !!(window.opera && window.opera.version);  // Opera 8.0+
+var isFirefox = testCSS('MozBoxSizing');                 // FF 0.8+
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    // At least Safari 3+: "[object HTMLElementConstructor]"
+var isChrome = !isSafari && testCSS('WebkitTransform');  // Chrome 1+
+var isIE = /*@cc_on!@*/false || testCSS('msTransform');  // At least IE6
+
+function browser_check()
+{
+	if(isOpera | isFirefox){
+		document.getElementById("player").innerHTML = "Music Playback not supported on this browser !! <br/> Use Safari / Chrome / IE9 browser ";
+		return false;
+	}
+	return true;
+}
+
+window.onload=browser_check ;
+
+
+
+function testCSS(prop) {
+    return prop in document.documentElement.style;
+}
+function check()
+{
+	songlist = document.getElementById("songlist").value;
+	if(songlist=="")
+	{
+		alert("Please add songs to the playlist!!");
+		return false;
+	}
+	else
+	{
+	    if(document.getElementById("playlist_name").value == "")
+    	  {
+      		alert("PLease Enter Playlist Name!!")
+      		return false;
+      	  }
+    	return true;
+   }
+}
+
+function remove(id,name)
+{
+	 var new_id="";
+	 songlist = document.getElementById("songlist").value;
+	 
+	 for( var i = 3 ; i < id.length;i++)
+	  	new_id += id[i];
+	 
+	 $("#"+id).remove();
+	 
+	 var list = songlist.split(',');
+	 var updated_list = {};
+	 var j=0;
+	 
+	 for (var i=0;i<list.length;i++)
+	 {
+		if(list[i]==new_id)
+		{
+			list[i]=-1;
+		}
+	 }
+	
+	var updated_songlist = "";
+	
+	for (var i=0;i<list.length;i++)
+	 {
+		if(updated_songlist=="")
+		{
+			if(list[i]!=-1)
+				updated_songlist = list[i];				
+		}
+		else
+		{
+			if(list[i]!=-1)
+				updated_songlist += "," + list[i];				
+		}
+	 }
+			 
+			 			 
+			 			 			 			 
+	 document.getElementById("songlist").value = updated_songlist;
+	 
+	 //document.getElementById(id) = "";
+	 //document.getElementById(new_id).innerHTML = "<div onclick=\"select('" + new_id + "','"+name+"')\"  id=\"" + new_id + "\" style=\"width:95%;padding-top:4px;height:26px;padding-left:5px;border-radius:5px;cursor:pointer;margin-top:5px;background:lightblue\"></div>"
+  	 
+  //	 document.getElementById(new_id).innerHTML = "<span>" + name + "</span>"
+	 return false;	  
+}
+
+function select(song_id,name)
+{
+    songlist = document.getElementById("songlist").value;
+    if(songlist=="")
+    	songlist += song_id;
+   	else
+   		songlist += "," + song_id;
+	
+	if(document.getElementById("cs_" + song_id) == null)   				
+		{
+			document.getElementById("current_selection").innerHTML+="<div id=\"cs_" + song_id + "\" style=\"width:95%;padding-top:4px;height:40px;padding-top:10px;padding-left:5px;border-radius:5px;cursor:pointer;margin-top:5px;background:lightblue\">"
+  	
+   			document.getElementById("current_selection").innerHTML+= "</div>"
+   	
+   			document.getElementById("cs_"+ song_id ).innerHTML += document.getElementById(song_id).innerHTML
+			document.getElementById("cs_"+ song_id ).innerHTML += 
+    			"<button class=\"btn\"  style=\"height:30px\" onclick=\"return remove('cs_" + song_id + "','" + name + "');\">remove</button>"
+			document.getElementById("songlist").value = songlist;
+		}
+	else
+		{
+			//document.getElementById(song_id).style.backgroundColor = "red";
+			//sleep(1);
+			//document.getElementById(song_id).style.backgroundColor = "lightblue";
+			
+			alert("song already in current selection.");
+		}
+	
+	return false;
+}
+
+var previous;
+var count = 0;
+
+function play(url,title,id)
+{
+	if(count==0)
+	{
+		previous = id;
+		count++;
+	}
+	else
+	{
+		document.getElementById(previous).style.backgroundColor = "lightblue";
+		document.getElementById(previous).style.color = "black";
+	}
+	if(browser_check()){
+	document.getElementById("player").innerHTML ="<div style=\"margin-bottom:10px;margin-left:14px;margin-right:14px;float:left\">Now Playing : </div><div style=\"text-align:left;\" ><span style=\"font-weight: bold;\">"+title+"</span></div><audio style=\"width:500px\" onended=\"next("+id+")\" controls=\"controls\" autoplay=\"autoplay\"><source src=\""+url+"\" type=\"audio/ogg\">Your browser does not support the audio element.</audio>"
+	}
+	document.getElementById(id).style.backgroundColor = "lightgreen";
+	document.getElementById(id).style.color = "darkred";
+	previous=id;
+	
+	
+}
+
+var flag = 1;
+
+function next(id)
+{
+	if(flag==0)
+	{
+		var s_list = document.getElementById("songlist").value.split(",");
+		var n_list = document.getElementById("namelist").value.split(",");
+        var u_list = document.getElementById("urllist").value.split(",");
+        
+        
+        
+        var next = 0;
+        
+        for(var i = 0; i< s_list.length ; i++ )	
+        {
+            if(s_list[i]==id)
+                {
+                    if(i == (s_list.length - 1))
+                        next = 0;
+                    else
+                        next=i+1;
+                    break;
+                }
+        }
+        play(my_trim(u_list[next]),my_trim(n_list[next]),s_list[next]);
+    }
+}
+
+
+function my_trim(str)
+{
+	var temp = str.replace("\'","")
+	temp = temp.replace("\[","")
+	temp = temp.replace("\]","")
+	return temp.replace("\'","")
+}
+
+
+
+function my_play_all()
+{
+	if(flag==1)
+		{
+			flag=0;
+			document.getElementById("all").innerHTML = "Play single";
+		}
+	else
+		{
+			flag=1;
+			document.getElementById("all").innerHTML = "Play all";
+		}
+}

@@ -1,0 +1,63 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+{{if 'isloggedin' in globals():}}
+	{{if 'playlist_exist' in globals():}}
+<h1  style="color:darkgreen" >{{=playlistName}}  </h1> 
+<!--span><h4>Songs : </h4></span-->	
+  	     <div class="btn" style=" text-align:left;cursor: auto;float: left; height: 300px; background: none repeat scroll 0% 0% lightyellow; width: 30%;">  
+            <h2>Playlist Songs :</h2>
+            <div id="available_songs" style="height:230px;overflow:scroll;overflow-x:hidden;">
+                 {{for song in songs :}}
+                <div  style="width:95%;padding-top:10px;height:40px;padding-left:5px;border-radius:5px;cursor:pointer;margin-top:5px;background:lightblue" id="{{=song.id}}">
+                        	<span>
+                    			{{=song.title}}
+	            			</span>
+                    <button style="height:30px" onclick="play('{{=URL('download', args=song.file)}}','{{=song.title}}','{{=str(song.id)}}')">play</button>
+                  </div>
+               {{pass}}
+             </div>
+        </div>	
+		 <div style="margin-left:10px;">
+				<div id="player" class="btn" style="display:table-cell;vertical-align:middle;height:300px;width:40%">
+                    <div style="margin-left:20px;float:left">
+                    	Now Playing : 
+                    </div>
+                    <div>
+                        <marque style="width:200px"  >{{=songs[0].title}}</marque>
+                    </div>
+                    <audio style="width:500px" onended=""  controls="controls" autoplay="autoplay">
+  						<source src="{{=URL('download', args=songs[0].file)}}" type="audio/mp3">
+							Your browser does not support the audio element.
+	     		 	</audio>
+			 	</div>
+		</div>
+<center style="margin-top:10px" ><a style="margin-left :20px"  class="btn" href="{{=URL('default','playlist')}}">Edit Playlist</a></center>
+	{{else:}}
+		<span>{{=XML(T('Create playlist of ur favouridfdfte songs by clicking %s', A("here",_href=URL('default','playlist'))))}}</span>
+	{{pass}}
+{{else:}}
+	<h3>{{=message}}</h3>
+    <span>{{=XML(T('Create playlist of ur favoufgdgdfrite songs by clicking %s', A("here",_href=URL('default','user'))))}}</span>
+	<h3>Check out fffgbew of the public playlists :</h3>
+	<div>
+		{{if 'public_playlists' in globals():}}
+    		
+        <div style="background-color:lightyellow;border: 1px solid;border-radius: 5px;min-height:150px;max-width:100%;overflow:auto">
+            {{for public_playlist in public_playlists:}}
+            <a class="btn" href="{{=URL('default','index'}}"  style="margin:5px;border:1px solid;border-radius:5px" > {{=public_playlist.name}} </a>
+            {{pass}}
+        </div>
+    		
+		{{else:}}
+    		
+        <h5 style="color:red" >Sorry, No public playlists pvailable.</h5>
+    		
+		{{pass}}
+		
+	</div>
+{{pass}}
+
+{{block right_sidebar}}
+{{#=A(T("Administrative Interface"), _href=URL('admin','default','index'), _class='btn', _style='margin-top: 1em;')}}
+
+{{end}}

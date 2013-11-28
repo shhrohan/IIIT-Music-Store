@@ -1,0 +1,82 @@
+{{extend 'layout.html'}}
+<form id="save" name="save" method="post" action="{{=URL('default','save')}}"  >
+<div style="padding:7px">
+    <center><h1 style="color:lightgrey" >{{=title}}</h1></center>
+    <div><h4>Name : </h4>
+    {{if 'playlist_name' in globals():}}
+        <input type="text" id="playlist_name" name="playlist_name" value="{{=playlist_name}}" />	
+    {{else:}}
+    	<input type="text" id="playlist_name" name="playlist_name"/>
+    {{pass}}
+    </div>
+    <div><h4> Visibilty :</h4>
+        {{if shared == 0:}}
+        	<input type="radio" name="shared" id="shared_secret" value="0" checked="checked"  /><span style="margin-left:5px" >Secret</span>
+        	<input style="margin-left:5px"  type="radio" name="shared" id="shared_closed" value="1" /><span style="margin-left:5px" >Closed</span>
+        	<input style="margin-left:5px"  type="radio" name="shared" id="shared_open" value="2"  /><span style="margin-left:5px"  >Open</span>
+        {{pass}}
+        {{if shared == 1:}}
+	    	<input type="radio" name="shared" id="shared_secret" value="0"/><span style="margin-left:5px"   >Secret</span>
+        	<input style="margin-left:5px"  type="radio" name="shared" id="shared_closed" value="1"  checked="checked"   /><span  style="margin-left:5px" >Closed</span>
+        	<input  style="margin-left:5px"  type="radio" name="shared" id="shared_open" value="2"  /><span style="margin-left:5px"  >Open</span>
+        
+        {{pass}}
+        {{if shared == 2:}}
+	    	<input type="radio" name="shared" id="shared_secret" value="0"  /><span style="margin-left:5px"  >Secret</span>
+        	<input style="margin-left:5px"  type="radio" name="shared" id="shared_closed" value="1" /><span style="margin-left:5px"   >Closed</span>
+        	<input style="margin-left:5px"  type="radio" name="shared" id="shared_open" value="2"  checked="checked" /><span style="margin-left:5px"  >Open</span>
+        {{pass}}
+    </div>
+    <h4>Song Selection : </h4>
+    <div>
+        <div id="avaliable_songs" class="btn" style=" text-align:left;cursor: auto;float: left; height: 300px; background: none repeat scroll 0% 0% lightyellow; width: 30%;">  
+            <h2>Available Songs :</h2>
+            <div id="available_songs" style="height:230px;overflow:scroll;overflow-x:hidden;">
+               {{if 'songs' in globals():}}
+                 {{for song in songs :}}
+                	 
+               			 <div onclick="select('{{=song.id}}','{{=song.title}}')" id="{{=song.id}}" style="width:95%;padding-top:4px;height:26px;padding-left:5px;border-radius:5px;cursor:pointer;margin-top:5px;background:lightblue;width" >
+                        	<span>
+                            	{{=song.title}}
+                        	</span>
+                    	  </div>
+                	 
+               	 {{pass}}
+               {{pass}}
+             </div>
+        </div>
+        <div style="float: left; height: 100px; width: 20px;">&nbsp;</div>
+        <div class="btn" style=" text-align:left;cursor: auto;float: left;height: 300px; background: none repeat scroll 0% 0% pink; width: 30%;">
+            <h2>Current Selection :</h2>
+            <div  id="current_selection" style="height:230px;overflow:scroll;overflow-x:hidden;">
+                 {{if 'p_songs' in globals():}}
+             		{{for p_song in p_songs:}}
+            			<div id="{{='cs_' + str(p_song.id)}}" style="width:95%;padding-top:4px;height:40px;padding-top:10px;padding-left:5px;border-radius:5px;cursor:pointer;margin-top:5px;background:lightblue">
+                            <span >
+                            {{=p_song.title}}
+                        	</span>
+                            <button style="height:30px" onclick="return remove('{{='cs_'+str(p_song.id)}}','{{=p_song.title}}');">
+                            	 remove
+                            </button>
+                    	</div>
+                	{{pass}}
+                {{pass}}
+             </div>
+            </div>
+        </div>
+        <input  type="hidden" name="songlist" id="songlist" value="" />
+        <input  type="hidden" name="songnamelist" id="songnamelist" value="" />
+        <script>
+            {{if 'songlist' in globals():}}
+            	document.getElementById('songlist').value = "{{=songlist}}";
+            {{pass}}
+        </script>
+	    <div style="float: left; height: 100px; width: 20px;">&nbsp;</div>
+    	<div>
+           <a class="btn" style="width:96px;"  href="{{=URL('default','playlist')}}">Reset</a>
+    	</div>
+		<div>
+        	<input class="btn"  style="width:127px;margin-top: 10px;"  onclick="return check();" type="submit" value="Save Playlist"/>    
+    	</div>
+</div>
+<form>
